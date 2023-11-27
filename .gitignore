@@ -1,0 +1,33 @@
+# Binaries, plugins, libs
+**/*.a
+**/*.so
+**/*.dll
+**/*.dylib
+**/*.exe
+**/*.test
+**/*.prof
+
+# Output directories
+/dist
+/build
+
+# Dependency directories
+/vendor/
+
+# IDEs
+.idea/
+*.iml
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Go specific
+*.out
+*.exe
+*.test
+*.prof
+/go.sum
+/go.mod
+
+.env
