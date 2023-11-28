@@ -36,6 +36,9 @@ func ErrorHandler(err error, w http.ResponseWriter, kp *KafkaProducer) {
 		respondWithJSON(w, http.StatusInternalServerError, generalErr)
 		kp.SendMessage(context.Background(), "http-error", generalErr.Message)
 	}
+	if err != nil {
+		kp.SendMessage(context.Background(), "http-error", err.Error())
+	}
 }
 
 func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
@@ -43,4 +46,8 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
 	w.Write(response)
+}
+
+func NewError(msg string) error {
+	return errors.New(msg)
 }

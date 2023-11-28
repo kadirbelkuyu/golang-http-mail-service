@@ -17,8 +17,21 @@ type EmailRequest struct {
 	Body    string `json:"body"`
 }
 
+// SendEmailHandler godoc
+// @Summary E-posta gönder
+// @Description E-posta göndermek için kullanılır
+// @Tags email
+// @Accept json
+// @Produce json
+// @Param email body EmailRequest true "E-posta İsteği"
+// @Success 200 {object} map[string]string "Başarı Yanıtı"
+// @Failure 400 {object} map[string]string "Hata Yanıtı"
+// @Router /send-email [post]
 func SendEmailHandler(cfg *config.Config, kp *util.KafkaProducer) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+
+		kp := util.NewKafkaProducer(cfg.KafkaBrokers, cfg.KafkaTopic)
+
 		if r.Method != "POST" {
 			util.ErrorHandler(util.NewHTTPError(http.StatusMethodNotAllowed, "Invalid request method"), w, kp)
 			return

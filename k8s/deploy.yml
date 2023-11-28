@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: email-sercvice
+spec:
+    replicas: 3
+    selector:
+        matchLabels:
+            app: email-sercvice
+    spec:
+    template:
+        metadata:
+            labels:
+                app: my-app
+        spec:
+            containers:
+            - name: email-service-continer
+                image: kadirbelkuyu/email-service:latest
+                ports:
+                - containerPort: 8080

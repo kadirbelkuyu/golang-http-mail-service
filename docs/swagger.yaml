@@ -1,0 +1,44 @@
+definitions:
+  email.EmailRequest:
+    properties:
+      body:
+        type: string
+      subject:
+        type: string
+      to:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /send-email:
+    post:
+      consumes:
+      - application/json
+      description: E-posta göndermek için kullanılır
+      parameters:
+      - description: E-posta İsteği
+        in: body
+        name: email
+        required: true
+        schema:
+          $ref: '#/definitions/email.EmailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Başarı Yanıtı
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Hata Yanıtı
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: E-posta gönder
+      tags:
+      - email
+swagger: "2.0"

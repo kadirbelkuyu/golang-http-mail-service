@@ -10,8 +10,11 @@ services:
     image: 'bitnami/kafka:latest'
     environment:
       - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
       - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CREATE_TOPICS=topic1:1:1,topic2:1:1, my-topic:1:1:compact, my-topic2:1:1:compact
     ports:
       - '9092:9092'
     depends_on:

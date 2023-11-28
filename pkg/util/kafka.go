@@ -10,6 +10,15 @@ type KafkaProducer struct {
 	Writer *kafka.Writer
 }
 
+//create new kafka writer using writer config
+
+func NewKafkaWriter(brokers []string, topic string) *kafka.Writer {
+	return kafka.NewWriter(kafka.WriterConfig{
+		Brokers: brokers,
+		Topic:   topic,
+	})
+}
+
 func NewKafkaProducer(brokers []string, topic string) *KafkaProducer {
 	w := kafka.NewWriter(kafka.WriterConfig{
 		Brokers: brokers,
