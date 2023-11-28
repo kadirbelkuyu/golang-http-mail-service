@@ -27,7 +27,7 @@ Thumbs.db
 *.exe
 *.test
 *.prof
-/go.sum
-/go.mod
+#/go.sum
+#/go.mod
 
 .env
