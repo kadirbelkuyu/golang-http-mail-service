@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/smtp"
 
 	"github.com/kadirbelkuyu/mail-service/pkg/config"
 	"github.com/kadirbelkuyu/mail-service/pkg/util"
@@ -30,7 +29,7 @@ type EmailRequest struct {
 func SendEmailHandler(cfg *config.Config, kp *util.KafkaProducer) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		kp := util.NewKafkaProducer(cfg.KafkaBrokers, cfg.KafkaTopic)
+		//kp := util.NewKafkaProducer(cfg.KafkaBrokers, cfg.KafkaTopic)
 
 		if r.Method != "POST" {
 			util.ErrorHandler(util.NewHTTPError(http.StatusMethodNotAllowed, "Invalid request method"), w, kp)
@@ -39,12 +38,13 @@ func SendEmailHandler(cfg *config.Config, kp *util.KafkaProducer) http.HandlerFu
 
 		var req EmailRequest
 		err := json.NewDecoder(r.Body).Decode(&req)
+		kp.SendMessage(r.Context(), "message", []byte(fmt.Sprintf("%v", req)))
 		if err != nil {
 			util.ErrorHandler(util.NewHTTPError(http.StatusBadRequest, "Error parsing request body"), w, kp)
 			return
 		}
 
-		err = SendEmail(cfg, req.To, req.Subject, req.Body)
+		//err = SendEmail(cfg, req.To, req.Subject, req.Body)
 		if err != nil {
 			util.ErrorHandler(util.NewHTTPError(http.StatusInternalServerError, "Error sending email"), w, kp)
 			return
@@ -53,13 +53,4 @@ func SendEmailHandler(cfg *config.Config, kp *util.KafkaProducer) http.HandlerFu
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{"message": "Email sent successfully"})
 	}
-}
-
-func SendEmail(cfg *config.Config, to, subject, body string) error {
-	msg := fmt.Sprintf("From: %s\nTo: %s\nSubject: %s\n\n%s", cfg.SenderEmail, to, subject, body)
-
-	auth := smtp.PlainAuth("", cfg.SenderEmail, cfg.SenderPassword, cfg.SMTPHost)
-	addr := fmt.Sprintf("%s:%s", cfg.SMTPHost, cfg.SMTPPort)
-
-	return smtp.SendMail(addr, auth, cfg.SenderEmail, []string{to}, []byte(msg))
 }
