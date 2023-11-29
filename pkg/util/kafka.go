@@ -2,38 +2,76 @@ package util
 
 import (
 	"context"
-
+	"encoding/json"
+	"fmt"
+	"github.com/kadirbelkuyu/mail-service/pkg/config"
+	"github.com/kadirbelkuyu/mail-service/pkg/services"
 	"github.com/segmentio/kafka-go"
+	"time"
 )
 
 type KafkaProducer struct {
-	Writer *kafka.Writer
+	Writer  *kafka.Writer
+	Channel *chan bool
 }
 
-//create new kafka writer using writer config
-
-func NewKafkaWriter(brokers []string, topic string) *kafka.Writer {
-	return kafka.NewWriter(kafka.WriterConfig{
-		Brokers: brokers,
-		Topic:   topic,
-	})
+type KafkaConsumer struct {
+	Reader  *kafka.Reader
+	Channel *chan bool
 }
 
-func NewKafkaProducer(brokers []string, topic string) *KafkaProducer {
+func NewKafkaProducer(brokers []string, topic string, channel *chan bool) *KafkaProducer {
 	w := kafka.NewWriter(kafka.WriterConfig{
 		Brokers: brokers,
 		Topic:   topic,
 	})
 	return &KafkaProducer{
-		Writer: w,
+		Writer:  w,
+		Channel: channel,
 	}
 }
 
-func (kp *KafkaProducer) SendMessage(ctx context.Context, key, message string) error {
+func NewKafkaConsumer(brokers []string, topic string, channel *chan bool) *KafkaConsumer {
+	r := kafka.NewReader(kafka.ReaderConfig{
+		Brokers: brokers,
+		Topic:   topic,
+	})
+
+	return &KafkaConsumer{
+		Reader:  r,
+		Channel: channel,
+	}
+}
+
+func (kp *KafkaProducer) SendMessage(ctx context.Context, key string, message []byte) error {
+	*kp.Channel <- true
 	return kp.Writer.WriteMessages(ctx,
 		kafka.Message{
 			Key:   []byte(key),
-			Value: []byte(message),
+			Value: message,
 		},
 	)
+}
+
+func (kc *KafkaConsumer) ReadMessage(ctx context.Context, cfg *config.Config) {
+
+	go func() {
+		fmt.Printf("Çalıştı")
+		reader, err := kc.Reader.ReadMessage(ctx)
+		if err != nil {
+			*kc.Channel <- false
+		}
+		if reader.Value == nil {
+			*kc.Channel <- false
+		}
+		var m MessageModel
+		json.Unmarshal(reader.Value, &m)
+		services.SendEmail(cfg, m.to, m.subject, m.body)
+		time.Sleep(time.Millisecond * 25)
+	}()
+	//<-*kc.Channel
+}
+
+type MessageModel struct {
+	to, subject, body string
 }

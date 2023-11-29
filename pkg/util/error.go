@@ -1,7 +1,6 @@
 package util
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -27,17 +26,17 @@ func ErrorHandler(err error, w http.ResponseWriter, kp *KafkaProducer) {
 	var httpErr *HTTPError
 	if ok := errors.As(err, &httpErr); ok {
 		respondWithJSON(w, httpErr.StatusCode, httpErr)
-		kp.SendMessage(context.Background(), "http-error", httpErr.Message)
+		//kp.SendMessage(context.Background(), "http-error", httpErr.Message)
 	} else {
 		generalErr := HTTPError{
 			StatusCode: http.StatusInternalServerError,
 			Message:    "Internal Server Error",
 		}
 		respondWithJSON(w, http.StatusInternalServerError, generalErr)
-		kp.SendMessage(context.Background(), "http-error", generalErr.Message)
+		//kp.SendMessage(context.Background(), "http-error", generalErr.Message)
 	}
 	if err != nil {
-		kp.SendMessage(context.Background(), "http-error", err.Error())
+		//kp.SendMessage(context.Background(), "http-error", err.Error())
 	}
 }
 
