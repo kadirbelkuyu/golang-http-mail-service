@@ -1,0 +1,26 @@
+name: 00 -- Main CI/CD pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+      - dev
+      - ci-cd
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: ./.github/workflows/build
+  permissions:
+    contents: read
+    issues: write
+    metadata: read
+    packages: write
+    pull-requests: write
+    statuses: write
+
+
+
