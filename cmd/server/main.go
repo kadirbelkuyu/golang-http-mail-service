@@ -20,14 +20,19 @@ func main() {
 
 	kp := util.NewKafkaProducer(cfg.KafkaBrokers, cfg.KafkaTopic, &Channel)
 
-	kc := util.NewKafkaConsumer(cfg.KafkaBrokers, cfg.KafkaTopic, kp.Channel)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	go util.Consume(ctx, cfg.KafkaBrokers, cfg.KafkaTopic)
+
+	//kc := util.NewKafkaConsumer(cfg.KafkaBrokers, cfg.KafkaTopic, kp.Channel)
 
 	//err := kp.SendMessage(context.Background(), "http-error", []byte("Test message"))
 	//if err != nil {
 	//	log.Printf("Failed to send message to Kafka: %v", err)
 	//}
 
-	kc.ReadMessage(context.Background(), cfg)
+	//kc.ReadMessage(context.Background(), cfg)
 	//r := kafka.NewReader(kafka.ReaderConfig{
 	//	Brokers:   cfg.KafkaBrokers,
 	//	Topic:     cfg.KafkaTopic,
@@ -54,7 +59,7 @@ func main() {
 	http.HandleFunc("/swagger/", httpSwagger.WrapHandler)
 
 	log.Println("Starting server on port 8080...")
-	if err := http.ListenAndServe(":7010", nil); err != nil {
+	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
 }

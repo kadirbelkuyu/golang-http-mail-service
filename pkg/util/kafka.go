@@ -31,15 +31,39 @@ func NewKafkaProducer(brokers []string, topic string, channel *chan bool) *Kafka
 	}
 }
 
-func NewKafkaConsumer(brokers []string, topic string, channel *chan bool) *KafkaConsumer {
+//func NewKafkaConsumer(brokers []string, topic string, channel *chan bool) *KafkaConsumer {
+//	r := kafka.NewReader(kafka.ReaderConfig{
+//		Brokers: brokers,
+//		Topic:   topic,
+//	})
+//
+//	return &KafkaConsumer{
+//		Reader:  r,
+//		Channel: channel,
+//	}
+//}
+
+func Consume(ctx context.Context, brokers []string, topic string) {
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: brokers,
 		Topic:   topic,
+		GroupID: "mail-service",
 	})
+	defer r.Close()
 
-	return &KafkaConsumer{
-		Reader:  r,
-		Channel: channel,
+	for {
+		fmt.Printf("Çalıştı")
+		select {
+		case <-ctx.Done():
+			return
+		default:
+			m, err := r.ReadMessage(ctx)
+			if err != nil {
+				// Log error and continue listening, or handle it as needed
+				continue
+			}
+			fmt.Printf("Message: %s\n", string(m.Value))
+		}
 	}
 }
 
