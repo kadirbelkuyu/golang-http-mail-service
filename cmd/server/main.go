@@ -23,9 +23,11 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	go util.Consume(ctx, cfg.KafkaBrokers, cfg.KafkaTopic)
+	go util.Consume(ctx, cfg.KafkaBrokers, cfg.KafkaTopic, cfg)
 
 	//kc := util.NewKafkaConsumer(cfg.KafkaBrokers, cfg.KafkaTopic, kp.Channel)
+	//
+	//kc.ReadMessage(ctx, cfg)
 
 	//err := kp.SendMessage(context.Background(), "http-error", []byte("Test message"))
 	//if err != nil {

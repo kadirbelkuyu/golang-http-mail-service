@@ -7,7 +7,6 @@ import (
 	"github.com/kadirbelkuyu/mail-service/pkg/config"
 	"github.com/kadirbelkuyu/mail-service/pkg/services"
 	"github.com/segmentio/kafka-go"
-	"time"
 )
 
 type KafkaProducer struct {
@@ -31,19 +30,19 @@ func NewKafkaProducer(brokers []string, topic string, channel *chan bool) *Kafka
 	}
 }
 
-//func NewKafkaConsumer(brokers []string, topic string, channel *chan bool) *KafkaConsumer {
-//	r := kafka.NewReader(kafka.ReaderConfig{
-//		Brokers: brokers,
-//		Topic:   topic,
-//	})
-//
-//	return &KafkaConsumer{
-//		Reader:  r,
-//		Channel: channel,
-//	}
-//}
+func NewKafkaConsumer(brokers []string, topic string, channel *chan bool) *KafkaConsumer {
+	r := kafka.NewReader(kafka.ReaderConfig{
+		Brokers: brokers,
+		Topic:   topic,
+	})
 
-func Consume(ctx context.Context, brokers []string, topic string) {
+	return &KafkaConsumer{
+		Reader:  r,
+		Channel: channel,
+	}
+}
+
+func Consume(ctx context.Context, brokers []string, topic string, cfg *config.Config) {
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: brokers,
 		Topic:   topic,
@@ -62,40 +61,52 @@ func Consume(ctx context.Context, brokers []string, topic string) {
 				// Log error and continue listening, or handle it as needed
 				continue
 			}
+			var mess EmailRequest
+			fmt.Printf("%v", m.Value)
+			json.Unmarshal(m.Value, &mess)
+			services.SendEmail(cfg, mess.To, mess.Subject, mess.Body)
+			fmt.Printf("%+v", &mess)
 			fmt.Printf("Message: %s\n", string(m.Value))
 		}
 	}
 }
 
-func (kp *KafkaProducer) SendMessage(ctx context.Context, key string, message []byte) error {
-	*kp.Channel <- true
+func (kp *KafkaProducer) SendMessage(ctx context.Context, key string, model EmailRequest) error {
+	x, _ := json.Marshal(model)
 	return kp.Writer.WriteMessages(ctx,
 		kafka.Message{
 			Key:   []byte(key),
-			Value: message,
+			Value: x,
 		},
 	)
 }
 
-func (kc *KafkaConsumer) ReadMessage(ctx context.Context, cfg *config.Config) {
-
-	go func() {
-		fmt.Printf("Çalıştı")
-		reader, err := kc.Reader.ReadMessage(ctx)
-		if err != nil {
-			*kc.Channel <- false
-		}
-		if reader.Value == nil {
-			*kc.Channel <- false
-		}
-		var m MessageModel
-		json.Unmarshal(reader.Value, &m)
-		services.SendEmail(cfg, m.to, m.subject, m.body)
-		time.Sleep(time.Millisecond * 25)
-	}()
-	//<-*kc.Channel
-}
+//func (kc *KafkaConsumer) ReadMessage(ctx context.Context, cfg *config.Config) {
+//
+//	go func() {
+//		fmt.Printf("Çalıştı")
+//		reader, err := kc.Reader.ReadMessage(ctx)
+//		if err != nil {
+//			*kc.Channel <- false
+//		}
+//		if reader.Value == nil {
+//			*kc.Channel <- false
+//		}
+//		var m MessageModel
+//		json.Unmarshal(reader.Value, &m)
+//		services.SendEmail(cfg, m.To, m.Subject, m.Body)
+//		time.Sleep(time.Millisecond * 25)
+//	}()
+//	//<-*kc.Channel
+//}
 
 type MessageModel struct {
-	to, subject, body string
+	To, Subject, Body string
+}
+
+// EmailRequest, gelen e-posta isteği için bir yapıdır
+type EmailRequest struct {
+	To      string `json:"to"`
+	Subject string `json:"subject"`
+	Body    string `json:"body"`
 }
