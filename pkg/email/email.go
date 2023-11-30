@@ -2,19 +2,11 @@ package email
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/kadirbelkuyu/mail-service/pkg/config"
 	"github.com/kadirbelkuyu/mail-service/pkg/util"
 )
-
-// EmailRequest, gelen e-posta isteği için bir yapıdır
-type EmailRequest struct {
-	To      string `json:"to"`
-	Subject string `json:"subject"`
-	Body    string `json:"body"`
-}
 
 // SendEmailHandler godoc
 // @Summary E-posta gönder
@@ -36,9 +28,10 @@ func SendEmailHandler(cfg *config.Config, kp *util.KafkaProducer) http.HandlerFu
 			return
 		}
 
-		var req EmailRequest
+		var req util.EmailRequest
 		err := json.NewDecoder(r.Body).Decode(&req)
-		kp.SendMessage(r.Context(), "message", []byte(fmt.Sprintf("%v", req)))
+		//kp.SendMessage(r.Context(), "message", []byte(fmt.Sprintf("%v", req)))
+		kp.SendMessage(r.Context(), "message", req)
 		if err != nil {
 			util.ErrorHandler(util.NewHTTPError(http.StatusBadRequest, "Error parsing request body"), w, kp)
 			return
