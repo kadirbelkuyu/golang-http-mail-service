@@ -6,6 +6,10 @@ import (
 	"net/smtp"
 )
 
+type MailSenderService struct {
+	cfg *config.Config
+}
+
 func SendEmail(cfg *config.Config, to, subject, body string) error {
 	msg := fmt.Sprintf("From: %s\nTo: %s\nSubject: %s\n\n%s", cfg.SenderEmail, to, subject, body)
 
