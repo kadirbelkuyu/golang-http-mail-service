@@ -15,15 +15,14 @@ import (
 func main() {
 	cfg := config.LoadConfig()
 
-	fmt.Println(cfg)
-	Channel := make(chan bool)
-
-	kp := util.NewKafkaProducer(cfg.KafkaBrokers, cfg.KafkaTopic, &Channel)
-
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	go util.Consume(ctx, cfg.KafkaBrokers, cfg.KafkaTopic, cfg)
+	kp := util.NewKafkaProducer(&ctx, cfg.KafkaBrokers, cfg.KafkaTopic)
+
+	kc := util.NewKafkaConsumer(cfg.KafkaBrokers, cfg.KafkaTopic)
+
+	go kc.Consume(ctx, cfg)
 
 	//kc := util.NewKafkaConsumer(cfg.KafkaBrokers, cfg.KafkaTopic, kp.Channel)
 	//
@@ -57,7 +56,7 @@ func main() {
 		fmt.Fprintf(w, "Hello World!")
 	})
 
-	http.HandleFunc("/send-email", email.SendEmailHandler(cfg, kp))
+	http.HandleFunc("/send-email", email.SendEmailHandler(kp))
 	http.HandleFunc("/swagger/", httpSwagger.WrapHandler)
 
 	log.Println("Starting server on port 8080...")

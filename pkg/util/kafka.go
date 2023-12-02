@@ -10,70 +10,59 @@ import (
 )
 
 type KafkaProducer struct {
-	Writer  *kafka.Writer
-	Channel *chan bool
+	Writer *kafka.Writer
+	ctx    *context.Context
 }
 
 type KafkaConsumer struct {
-	Reader  *kafka.Reader
-	Channel *chan bool
+	Reader *kafka.Reader
 }
 
-func NewKafkaProducer(brokers []string, topic string, channel *chan bool) *KafkaProducer {
+func NewKafkaProducer(ctx *context.Context, brokers []string, topic string) *KafkaProducer {
 	w := kafka.NewWriter(kafka.WriterConfig{
 		Brokers: brokers,
 		Topic:   topic,
 	})
 	return &KafkaProducer{
-		Writer:  w,
-		Channel: channel,
+		Writer: w,
+		ctx:    ctx,
 	}
 }
 
-func NewKafkaConsumer(brokers []string, topic string, channel *chan bool) *KafkaConsumer {
-	r := kafka.NewReader(kafka.ReaderConfig{
-		Brokers: brokers,
-		Topic:   topic,
-	})
-
-	return &KafkaConsumer{
-		Reader:  r,
-		Channel: channel,
-	}
-}
-
-func Consume(ctx context.Context, brokers []string, topic string, cfg *config.Config) {
+func NewKafkaConsumer(brokers []string, topic string) *KafkaConsumer {
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: brokers,
 		Topic:   topic,
 		GroupID: "mail-service",
 	})
-	defer r.Close()
 
+	return &KafkaConsumer{
+		Reader: r,
+	}
+}
+
+func (kc *KafkaConsumer) Consume(ctx context.Context, cfg *config.Config) {
 	for {
 		fmt.Printf("Çalıştı")
 		select {
 		case <-ctx.Done():
 			return
 		default:
-			m, err := r.ReadMessage(ctx)
+			m, err := kc.Reader.ReadMessage(ctx)
 			if err != nil {
 				// Log error and continue listening, or handle it as needed
 				continue
 			}
 			var mess EmailRequest
-			fmt.Printf("%v", m.Value)
 			json.Unmarshal(m.Value, &mess)
-			services.SendEmail(cfg, mess.To, mess.Subject, mess.Body)
-			fmt.Printf("%+v", &mess)
-			fmt.Printf("Message: %s\n", string(m.Value))
+			go services.SendEmail(cfg, mess.To, mess.Subject, mess.Body)
 		}
 	}
 }
 
-func (kp *KafkaProducer) SendMessage(ctx context.Context, key string, model EmailRequest) error {
+func (kp *KafkaProducer) SendMessage(key string, model EmailRequest) {
 	x, _ := json.Marshal(model)
-	return kp.Writer.WriteMessages(ctx,
+	go kp.Writer.WriteMessages(*kp.ctx,
 		kafka.Message{
 			Key:   []byte(key),
 			Value: x,
@@ -99,10 +88,6 @@ func (kp *KafkaProducer) SendMessage(ctx context.Context, key string, model Emai
 //	}()
 //	//<-*kc.Channel
 //}
-
-type MessageModel struct {
-	To, Subject, Body string
-}
 
 // EmailRequest, gelen e-posta isteği için bir yapıdır
 type EmailRequest struct {
