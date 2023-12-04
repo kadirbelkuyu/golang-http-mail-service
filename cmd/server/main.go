@@ -30,8 +30,6 @@ func main() {
 		fmt.Fprintf(w, "Hello World!")
 	})
 
-	fmt.Printf("Test")
-
 	http.HandleFunc("/send-email", email.SendEmailHandler(cfg, kp))
 	http.HandleFunc("/swagger/", httpSwagger.WrapHandler)
 
