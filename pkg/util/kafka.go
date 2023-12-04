@@ -7,6 +7,7 @@ import (
 	"github.com/kadirbelkuyu/mail-service/pkg/config"
 	"github.com/kadirbelkuyu/mail-service/pkg/services"
 	"github.com/segmentio/kafka-go"
+	"log"
 )
 
 type KafkaProducer struct {
@@ -58,7 +59,7 @@ func Consume(ctx context.Context, brokers []string, topic string, cfg *config.Co
 		default:
 			m, err := r.ReadMessage(ctx)
 			if err != nil {
-				// Log error and continue listening, or handle it as needed
+				fmt.Printf("Error reading message: %v", err)
 				continue
 			}
 			var mess EmailRequest
@@ -73,12 +74,12 @@ func Consume(ctx context.Context, brokers []string, topic string, cfg *config.Co
 
 func (kp *KafkaProducer) SendMessage(ctx context.Context, key string, model EmailRequest) error {
 	x, _ := json.Marshal(model)
-	return kp.Writer.WriteMessages(ctx,
-		kafka.Message{
-			Key:   []byte(key),
-			Value: x,
-		},
-	)
+	err := kp.Writer.WriteMessages(ctx, kafka.Message{Key: []byte(key), Value: x})
+	if err != nil {
+		log.Printf("Error sending Kafka message: %v", err)
+		return err
+	}
+	return nil
 }
 
 //func (kc *KafkaConsumer) ReadMessage(ctx context.Context, cfg *config.Config) {
