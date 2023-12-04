@@ -47,7 +47,7 @@ func SendEmailHandler(cfg *config.Config, kp *util.KafkaProducer) http.HandlerFu
 		}
 
 		go func(req util.EmailRequest) {
-			err := kp.SendMessage(r.Context(), "message", req)
+			err := kp.SendMessage("message", req)
 			if err != nil {
 				// Hata ve e-posta bilgilerini loglama
 				logger.Printf("Error sending message to Kafka: %v, EmailRequest: %+v", err, req)
