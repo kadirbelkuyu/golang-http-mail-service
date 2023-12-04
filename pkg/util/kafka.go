@@ -7,7 +7,6 @@ import (
 	"github.com/kadirbelkuyu/mail-service/pkg/config"
 	"github.com/kadirbelkuyu/mail-service/pkg/services"
 	"github.com/segmentio/kafka-go"
-	"log"
 )
 
 type KafkaProducer struct {
@@ -47,7 +46,7 @@ func Consume(ctx context.Context, brokers []string, topic string, cfg *config.Co
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: brokers,
 		Topic:   topic,
-		//GroupID: "mail-service",
+		GroupID: "mail-service",
 	})
 	defer r.Close()
 
@@ -59,7 +58,7 @@ func Consume(ctx context.Context, brokers []string, topic string, cfg *config.Co
 		default:
 			m, err := r.ReadMessage(ctx)
 			if err != nil {
-				fmt.Printf("Kafka Consumer Error: %s", err)
+				// Log error and continue listening, or handle it as needed
 				continue
 			}
 			var mess EmailRequest
@@ -74,23 +73,13 @@ func Consume(ctx context.Context, brokers []string, topic string, cfg *config.Co
 
 func (kp *KafkaProducer) SendMessage(ctx context.Context, key string, model EmailRequest) error {
 	x, _ := json.Marshal(model)
-	err := kp.Writer.WriteMessages(ctx, kafka.Message{Key: []byte(key), Value: x})
-	if err != nil {
-		log.Printf("Kafka Producer Error: %s", err)
-		return err
-	}
-	return nil
+	return kp.Writer.WriteMessages(ctx,
+		kafka.Message{
+			Key:   []byte(key),
+			Value: x,
+		},
+	)
 }
-
-//func (kp *KafkaProducer) SendMessage(ctx context.Context, key string, model EmailRequest) error {
-//	x, _ := json.Marshal(model)
-//	return kp.Writer.WriteMessages(ctx,
-//		kafka.Message{
-//			Key:   []byte(key),
-//			Value: x,
-//		},
-//	)
-//}
 
 //func (kc *KafkaConsumer) ReadMessage(ctx context.Context, cfg *config.Config) {
 //

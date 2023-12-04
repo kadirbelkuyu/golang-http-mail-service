@@ -2,27 +2,11 @@ package email
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
-	"os"
 
 	"github.com/kadirbelkuyu/mail-service/pkg/config"
 	"github.com/kadirbelkuyu/mail-service/pkg/util"
 )
-
-var (
-	logFile *os.File
-	logger  *log.Logger
-)
-
-func init() {
-	logFile, err := os.OpenFile("logs.log", os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	logger = log.New(logFile, "", log.LstdFlags|log.Lshortfile)
-}
 
 // SendEmailHandler godoc
 // @Summary E-posta gönder
@@ -36,22 +20,30 @@ func init() {
 // @Router /send-email [post]
 func SendEmailHandler(cfg *config.Config, kp *util.KafkaProducer) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// ...
+
+		//kp := util.NewKafkaProducer(cfg.KafkaBrokers, cfg.KafkaTopic)
+
+		if r.Method != "POST" {
+			util.ErrorHandler(util.NewHTTPError(http.StatusMethodNotAllowed, "Invalid request method"), w, kp)
+			return
+		}
+
 		var req util.EmailRequest
 		err := json.NewDecoder(r.Body).Decode(&req)
+		//kp.SendMessage(r.Context(), "message", []byte(fmt.Sprintf("%v", req)))
+		kp.SendMessage(r.Context(), "message", req)
 		if err != nil {
 			util.ErrorHandler(util.NewHTTPError(http.StatusBadRequest, "Error parsing request body"), w, kp)
 			return
 		}
 
-		go func(req util.EmailRequest) {
-			err := kp.SendMessage(r.Context(), "message", req)
-			if err != nil {
-				logger.Printf("Error sending message to Kafka: %v, EmailRequest: %+v", err, req)
-			}
-		}(req)
+		//err = SendEmail(cfg, req.To, req.Subject, req.Body)
+		if err != nil {
+			util.ErrorHandler(util.NewHTTPError(http.StatusInternalServerError, "Error sending email"), w, kp)
+			return
+		}
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]string{"message": "Email sending initiated"})
+		json.NewEncoder(w).Encode(map[string]string{"message": "Email sent successfully"})
 	}
 }
