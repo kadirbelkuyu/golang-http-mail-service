@@ -38,11 +38,7 @@ func init() {
 // @Router /send-email [post]
 func SendEmailHandler(cfg *config.Config, kp *util.KafkaProducer) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != "POST" {
-			util.ErrorHandler(util.NewHTTPError(http.StatusMethodNotAllowed, "Invalid request method"), w, kp)
-			return
-		}
-
+		// ...
 		var req util.EmailRequest
 		err := json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
@@ -53,7 +49,8 @@ func SendEmailHandler(cfg *config.Config, kp *util.KafkaProducer) http.HandlerFu
 		go func(req util.EmailRequest) {
 			err := kp.SendMessage(r.Context(), "message", req)
 			if err != nil {
-				logger.Printf("Error sending message to Kafka: %v", err)
+				// Hata ve e-posta bilgilerini loglama
+				logger.Printf("Error sending message to Kafka: %v, EmailRequest: %+v", err, req)
 			}
 		}(req)
 

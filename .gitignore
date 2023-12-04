@@ -22,6 +22,9 @@
 .DS_Store
 Thumbs.db
 
+logs*
+kafka_errors.log*
+*.log
 # Go specific
 *.out
 *.exe
