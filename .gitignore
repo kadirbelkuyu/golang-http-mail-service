@@ -30,4 +30,7 @@ Thumbs.db
 #/go.sum
 #/go.mod
 
+logs.log*
+logs*
+
 .env

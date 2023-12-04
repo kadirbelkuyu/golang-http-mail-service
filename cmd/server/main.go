@@ -3,13 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
-	httpSwagger "github.com/swaggo/http-swagger"
-	"log"
-	"net/http"
-
+	"github.com/go-chi/chi"
 	"github.com/kadirbelkuyu/mail-service/pkg/config"
 	"github.com/kadirbelkuyu/mail-service/pkg/email"
 	"github.com/kadirbelkuyu/mail-service/pkg/util"
+	httpSwagger "github.com/swaggo/http-swagger"
+	"log"
+	"net/http"
 )
 
 func main() {
@@ -58,7 +58,12 @@ func main() {
 	})
 
 	http.HandleFunc("/send-email", email.SendEmailHandler(cfg, kp))
-	http.HandleFunc("/swagger/", httpSwagger.WrapHandler)
+	//http.HandleFunc("/swagger/", httpSwagger.WrapHandler)
+
+	r := chi.NewRouter()
+	r.Get("/swagger/*", httpSwagger.Handler(
+		httpSwagger.URL("http://localhost:8080/swagger/doc.json"), //The url pointing to API definition"
+	))
 
 	log.Println("Starting server on port 8080...")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
