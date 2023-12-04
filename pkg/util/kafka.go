@@ -12,26 +12,26 @@ import (
 
 type KafkaProducer struct {
 	Writer  *kafka.Writer
-	Channel *chan bool
+	Context *context.Context
 }
 
 type KafkaConsumer struct {
 	Reader  *kafka.Reader
-	Channel *chan bool
+	Context context.Context
 }
 
-func NewKafkaProducer(brokers []string, topic string, channel *chan bool) *KafkaProducer {
+func NewKafkaProducer(ctx *context.Context, brokers []string, topic string) *KafkaProducer {
 	w := kafka.NewWriter(kafka.WriterConfig{
 		Brokers: brokers,
 		Topic:   topic,
 	})
 	return &KafkaProducer{
 		Writer:  w,
-		Channel: channel,
+		Context: ctx,
 	}
 }
 
-func NewKafkaConsumer(brokers []string, topic string, channel *chan bool) *KafkaConsumer {
+func NewKafkaConsumer(ctx context.Context, brokers []string, topic string) *KafkaConsumer {
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: brokers,
 		Topic:   topic,
@@ -39,11 +39,11 @@ func NewKafkaConsumer(brokers []string, topic string, channel *chan bool) *Kafka
 
 	return &KafkaConsumer{
 		Reader:  r,
-		Channel: channel,
+		Context: ctx,
 	}
 }
 
-func Consume(ctx context.Context, brokers []string, topic string, cfg *config.Config) {
+func (kc *KafkaConsumer) Consume(brokers []string, topic string, cfg *config.Config) {
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: brokers,
 		Topic:   topic,
@@ -54,10 +54,10 @@ func Consume(ctx context.Context, brokers []string, topic string, cfg *config.Co
 	for {
 		fmt.Printf("Çalıştı")
 		select {
-		case <-ctx.Done():
+		case <-kc.Context.Done():
 			return
 		default:
-			m, err := r.ReadMessage(ctx)
+			m, err := r.ReadMessage(kc.Context)
 			if err != nil {
 				fmt.Printf("Error reading message: %v", err)
 				continue
@@ -72,34 +72,15 @@ func Consume(ctx context.Context, brokers []string, topic string, cfg *config.Co
 	}
 }
 
-func (kp *KafkaProducer) SendMessage(ctx context.Context, key string, model EmailRequest) error {
+func (kp *KafkaProducer) SendMessage(key string, model EmailRequest) error {
 	x, _ := json.Marshal(model)
-	err := kp.Writer.WriteMessages(ctx, kafka.Message{Key: []byte(key), Value: x})
+	err := kp.Writer.WriteMessages(*kp.Context, kafka.Message{Key: []byte(key), Value: x})
 	if err != nil {
 		log.Printf("Error sending Kafka message: %v", err)
 		return err
 	}
 	return nil
 }
-
-//func (kc *KafkaConsumer) ReadMessage(ctx context.Context, cfg *config.Config) {
-//
-//	go func() {
-//		fmt.Printf("Çalıştı")
-//		reader, err := kc.Reader.ReadMessage(ctx)
-//		if err != nil {
-//			*kc.Channel <- false
-//		}
-//		if reader.Value == nil {
-//			*kc.Channel <- false
-//		}
-//		var m MessageModel
-//		json.Unmarshal(reader.Value, &m)
-//		services.SendEmail(cfg, m.To, m.Subject, m.Body)
-//		time.Sleep(time.Millisecond * 25)
-//	}()
-//	//<-*kc.Channel
-//}
 
 type MessageModel struct {
 	To, Subject, Body string

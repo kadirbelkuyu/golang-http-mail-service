@@ -16,42 +16,15 @@ func main() {
 	cfg := config.LoadConfig()
 
 	fmt.Println(cfg)
-	Channel := make(chan bool)
-
-	kp := util.NewKafkaProducer(cfg.KafkaBrokers, cfg.KafkaTopic, &Channel)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	go util.Consume(ctx, cfg.KafkaBrokers, cfg.KafkaTopic, cfg)
+	kp := util.NewKafkaProducer(&ctx, cfg.KafkaBrokers, cfg.KafkaTopic)
 
-	//kc := util.NewKafkaConsumer(cfg.KafkaBrokers, cfg.KafkaTopic, kp.Channel)
-	//
-	//kc.ReadMessage(ctx, cfg)
+	kc := util.NewKafkaConsumer(ctx, cfg.KafkaBrokers, cfg.KafkaTopic)
 
-	//err := kp.SendMessage(context.Background(), "http-error", []byte("Test message"))
-	//if err != nil {
-	//	log.Printf("Failed to send message to Kafka: %v", err)
-	//}
-
-	//kc.ReadMessage(context.Background(), cfg)
-	//r := kafka.NewReader(kafka.ReaderConfig{
-	//	Brokers:   cfg.KafkaBrokers,
-	//	Topic:     cfg.KafkaTopic,
-	//	GroupID:   "mail-service",
-	//	Partition: cap(cfg.KafkaBrokers),
-	//	MinBytes:  10e3,
-	//	MaxBytes:  10e6,
-	//})
-	//defer r.Close()
-	//
-	//for {
-	//	m, err := r.ReadMessage(context.Background())
-	//	if err != nil {
-	//		break
-	//	}
-	//
-	//	fmt.Printf("Mesaj: %s\n", string(m.Value))
+	go kc.Consume(cfg.KafkaBrokers, cfg.KafkaTopic, cfg)
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Hello World!")
