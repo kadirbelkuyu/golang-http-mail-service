@@ -14,6 +14,7 @@ jobs:
         uses: JetBrains/qodana-action@v2023.3
         env:
             QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
+        projectBaseDir: ./
 
   SonarcloudScan:
     name: SonarCloudScan1
@@ -27,4 +28,4 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
-          projectBaseDir: golang-http-mail-service/
+          projectBaseDir: ./
