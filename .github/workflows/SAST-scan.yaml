@@ -3,8 +3,7 @@ name: SAST scan
 
 on:
   workflow_run:
-    workflows:
-      -   ['Docker Build and Push']
+    workflows: ["main", "Docker Build and Push"]
     types:
         - completed
 jobs:
