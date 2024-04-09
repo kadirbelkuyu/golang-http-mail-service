@@ -1,6 +1,5 @@
 name: SAST scan
 
-
 on:
   workflow_run:
     workflows: ["main", "Docker Build and Push"]
@@ -12,9 +11,10 @@ jobs:
     steps:
       - name: 'Qodana Scan'
         uses: JetBrains/qodana-action@v2023.3
+        with:
+          projectBaseDir: ./
         env:
             QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
-        projectBaseDir: ./
 
   SonarcloudScan:
     name: SonarCloudScan1
@@ -25,7 +25,7 @@ jobs:
           fetch-depth: 0
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           projectBaseDir: ./
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
