@@ -1,0 +1,250 @@
+repo_name: kadirbelkuyu/golang-http-mail-service
+report_id: 4c59da4ff1a57c021c6a361adc49a3ea
+version: 0.1
+repo_type: Public
+timestamp: '2024-04-15T07:23:17+00:00'
+requested_by: kadirbelkuyu
+provider: github
+branch: main
+detected_tools_count: 18
+tools:
+- name: Golang
+  description: An open source programming language that makes it easy to build simple,
+    reliable, and efficient software
+  website_url: http://golang.org/
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Languages
+  image_url: https://img.stackshare.io/service/1005/O6AczwfV_400x400.png
+  detection_source_url: https://github.com/kadirbelkuyu/golang-http-mail-service
+  detection_source: Repo Metadata
+- name: Kafka
+  description: Distributed, fault tolerant, high throughput pub-sub messaging system
+  website_url: http://kafka.apache.org/
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Data Stores
+  sub_category: Message Queue
+  image_url: https://img.stackshare.io/service/1063/kazUJooF_400x400.jpg
+  detection_source_url: https://github.com/kadirbelkuyu/golang-http-mail-service/blob/main/docker-compose.yml
+  detection_source: docker-compose.yml
+  last_updated_by: kadirbelkuyu
+  last_updated_on: 2023-11-28 10:39:43.000000000 Z
+- name: Kafka REST
+  description: A RESTful interface to a Kafka cluster
+  website_url: https://github.com/confluentinc/kafka-rest
+  version: 7.0.1
+  open_source: true
+  hosted_saas: false
+  category: Data Stores
+  sub_category: Kafka Tools
+  image_url: https://img.stackshare.io/service/8938/default_952e19080b823dcfc14ef0508ae6a783d35224f6.png
+  detection_source_url: https://github.com/kadirbelkuyu/golang-http-mail-service/blob/main/docker-compose.yml
+  detection_source: docker-compose.yml
+  last_updated_by: kadirbelkuyu
+  last_updated_on: 2023-11-28 10:39:43.000000000 Z
+- name: Docker
+  description: Enterprise Container Platform for High-Velocity Innovation.
+  website_url: https://www.docker.com/
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Virtual Machine Platforms & Containers
+  image_url: https://img.stackshare.io/service/586/n4u37v9t_400x400.png
+  detection_source_url: https://github.com/kadirbelkuyu/golang-http-mail-service
+  detection_source: Repo Metadata
+- name: Git
+  description: Fast, scalable, distributed revision control system
+  website_url: http://git-scm.com/
+  open_source: true
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Version Control System
+  image_url: https://img.stackshare.io/service/1046/git.png
+  detection_source_url: https://github.com/kadirbelkuyu/golang-http-mail-service
+  detection_source: Repo Metadata
+- name: GitHub Actions
+  description: Automate your workflow from idea to production
+  website_url: https://github.com/features/actions
+  open_source: false
+  hosted_saas: true
+  category: Build, Test, Deploy
+  sub_category: Continuous Integration
+  image_url: https://img.stackshare.io/service/11563/actions.png
+  detection_source_url: https://github.com/kadirbelkuyu/golang-http-mail-service/blob/main/.github/workflows/SAST-scan.yaml
+  detection_source: ".github/workflows/SAST-scan.yaml"
+  last_updated_by: kadirbelkuyu
+  last_updated_on: 2024-04-09 11:53:52.000000000 Z
+- name: compress
+  description: Optimized compression packages
+  package_url: https://pkg.go.dev/github.com/klauspost/compress
+  version: 1.15.9
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: Go Modules Packages
+  image_url: https://img.stackshare.io/package/go-packages/image.png
+  detection_source_url: https://github.com/kadirbelkuyu/golang-http-mail-service/blob/main/go.sum
+  detection_source: go.mod
+  last_updated_by: kadirbelkuyu
+  last_updated_on: 2023-11-28 10:39:43.000000000 Z
+- name: easyjson
+  description: Fast JSON serializer for golang
+  package_url: https://pkg.go.dev/github.com/mailru/easyjson
+  version: 0.0.0
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: Go Modules Packages
+  image_url: https://img.stackshare.io/package/go-packages/image.png
+  detection_source_url: https://github.com/kadirbelkuyu/golang-http-mail-service/blob/main/go.sum
+  detection_source: go.mod
+  last_updated_by: kadirbelkuyu
+  last_updated_on: 2023-11-28 10:39:43.000000000 Z
+- name: godotenv
+  description: A Go port of Ruby's dotenv library
+  package_url: https://pkg.go.dev/github.com/joho/godotenv
+  version: 1.5.1
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: Go Modules Packages
+  image_url: https://img.stackshare.io/package/go-packages/image.png
+  detection_source_url: https://github.com/kadirbelkuyu/golang-http-mail-service/blob/main/go.sum
+  detection_source: go.mod
+  last_updated_by: Batuhan Inal
+  last_updated_on: 2023-11-29 08:49:24.000000000 Z
+- name: jsonpointer
+  description: Fork of gojsonpointer with support for structs
+  package_url: https://pkg.go.dev/github.com/go-openapi/jsonpointer
+  version: 0.19.3
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: Go Modules Packages
+  image_url: https://img.stackshare.io/package/go-packages/image.png
+  detection_source_url: https://github.com/kadirbelkuyu/golang-http-mail-service/blob/main/go.sum
+  detection_source: go.mod
+  last_updated_by: Batuhan Inal
+  last_updated_on: 2023-11-29 08:49:24.000000000 Z
+- name: jsonreference
+  description: Fork of gojsonreference with support for structs
+  package_url: https://pkg.go.dev/github.com/go-openapi/jsonreference
+  version: 0.20.0
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: Go Modules Packages
+  image_url: https://img.stackshare.io/package/go-packages/image.png
+  detection_source_url: https://github.com/kadirbelkuyu/golang-http-mail-service/blob/main/go.sum
+  detection_source: go.mod
+  last_updated_by: kadirbelkuyu
+  last_updated_on: 2023-11-28 10:39:43.000000000 Z
+- name: kafka-go
+  description: Kafka library in Go
+  package_url: https://pkg.go.dev/github.com/segmentio/kafka-go
+  version: 0.4.45
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: Go Modules Packages
+  image_url: https://img.stackshare.io/package/go-packages/image.png
+  detection_source_url: https://github.com/kadirbelkuyu/golang-http-mail-service/blob/main/go.sum
+  detection_source: go.mod
+  last_updated_by: Batuhan Inal
+  last_updated_on: 2023-11-29 08:49:24.000000000 Z
+- name: net
+  description: Go supplementary network libraries
+  package_url: https://pkg.go.dev/golang.org/x/net
+  version: 0.0.0
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: Go Modules Packages
+  image_url: https://img.stackshare.io/package/go-packages/image.png
+  detection_source_url: https://github.com/kadirbelkuyu/golang-http-mail-service/blob/main/go.sum
+  detection_source: go.mod
+  last_updated_by: kadirbelkuyu
+  last_updated_on: 2023-11-28 10:39:43.000000000 Z
+- name: spec
+  description: Openapi specification object model
+  package_url: https://pkg.go.dev/github.com/go-openapi/spec
+  version: 0.20.9
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: Go Modules Packages
+  image_url: https://img.stackshare.io/package/go-packages/image.png
+  detection_source_url: https://github.com/kadirbelkuyu/golang-http-mail-service/blob/main/go.sum
+  detection_source: go.mod
+  last_updated_by: kadirbelkuyu
+  last_updated_on: 2023-11-28 10:39:43.000000000 Z
+- name: swag
+  description: Goodie bag in use in the go-openapi projects
+  package_url: https://pkg.go.dev/github.com/go-openapi/swag
+  version: 0.19.5
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: Go Modules Packages
+  image_url: https://img.stackshare.io/package/go-packages/image.png
+  detection_source_url: https://github.com/kadirbelkuyu/golang-http-mail-service/blob/main/go.sum
+  detection_source: go.mod
+  last_updated_by: Batuhan Inal
+  last_updated_on: 2023-11-29 08:49:24.000000000 Z
+- name: swaggo/swag
+  description: Automatically generate RESTful API documentation with Swagger 2.0 for
+    Go
+  package_url: https://pkg.go.dev/github.com/swaggo/swag
+  version: 1.16.2
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: Go Modules Packages
+  image_url: https://img.stackshare.io/package/go-packages/image.png
+  detection_source_url: https://github.com/kadirbelkuyu/golang-http-mail-service/blob/main/go.sum
+  detection_source: go.mod
+  last_updated_by: Batuhan Inal
+  last_updated_on: 2023-11-29 08:49:24.000000000 Z
+- name: sys
+  description: Go packages for low-level interaction with the operating system
+  package_url: https://pkg.go.dev/golang.org/x/sys
+  version: 0.0.0
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: Go Modules Packages
+  image_url: https://img.stackshare.io/package/go-packages/image.png
+  detection_source_url: https://github.com/kadirbelkuyu/golang-http-mail-service/blob/main/go.sum
+  detection_source: go.mod
+  last_updated_by: kadirbelkuyu
+  last_updated_on: 2023-11-28 10:39:43.000000000 Z
+- name: tools
+  description: Go Tools
+  package_url: https://pkg.go.dev/golang.org/x/tools
+  version: 0.0.0
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: Go Modules Packages
+  image_url: https://img.stackshare.io/package/go-packages/image.png
+  detection_source_url: https://github.com/kadirbelkuyu/golang-http-mail-service/blob/main/go.sum
+  detection_source: go.mod
+  last_updated_by: kadirbelkuyu
+  last_updated_on: 2023-11-28 10:39:43.000000000 Z
